@@ -7,7 +7,12 @@ function draw() {
 		labels: {
 			"Company": {
 				caption: "name",
-				color: "red"
+			},
+			"Person": {
+				caption: "fullName"
+			},
+			"legalName": {
+				caption: "name"
 			}
 		},
 		relationships: {
