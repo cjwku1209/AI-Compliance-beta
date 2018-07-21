@@ -17,7 +17,7 @@ s = new sigma({
 //load neo4j
 sigma.neo4j.cypher(
 	{ url: 'http://localhost:7474', user: 'neo4j', password: 'neo4j' },
-	'match (p:Person {fullNameInChinese: \'郭台銘\'}) return p',
+	'match (p:Person {fullNameInChinese  : \'杜平\'}) return p',
 	s,
 	function(s) {
 		console.log('Number of nodes :'+ s.graph.nodes().length);
@@ -47,22 +47,31 @@ function initData(s){
 				break;
 			case "Person":
 				if(n.neo4j_data.fullNameInChinese != null){
-					n.label = n.neo4j_data.fullNameInChinese
+					n.label = n.neo4j_data.fullNameInChinese;
 				}
 				else{
 					n.label = n.neo4j_data.fullName;
 				}
 				break;
+			case "Metrics":
+			case "HeadQuarter":
+				if(n.neo4j_data.legalName != null){
+					n.label = n.neo4j_data.legalName;
+					n.type = "diamond"
+				}
 		}
 		if (n.neo4j_data.sanctionedEntity ==="true") {
-			node.color = "red"
+			n.color = "red"
 		}
+		console.log(n.neo4j_labels[0]);
+		console.log(n);
 	});
-	s.graph.edges().forEach(function (e) {
-		console.log(e);
-		console.log(e.type);
-		console.log(e.color);
-	})
+
+	// s.graph.edges().forEach(function (e) {
+	// 	console.log(e);
+	// 	console.log(e.type);
+	// 	console.log(e.color);
+	// })
 }
 
 //tooltip
@@ -117,3 +126,57 @@ var config = {
 };
 // Instanciate the tooltips plugin with a Mustache renderer for node tooltips:
 var tooltips = sigma.plugins.tooltips(s, s.renderers[0], config);
+
+function rightClickExpand(target){
+	var node_id = $(target).attr('data-value');
+	var relation_type = $(target).attr('name');
+	if (relation_type=="DEFAULT"){
+		var cypher = "MATCH (n)-[r]-(m) WHERE id(n)=@id@ RETURN n,r,m";
+	}else{
+		// var cypher = "MATCH (n)-[r:@relation@]-(m) WHERE id(n)=@id@ RETURN n,r,m";
+		// cypher = cypher.replace('@relation@', relation_type);
+		var cypher = "MATCH (n)-[r]-(m) WHERE id(n)=@id@ RETURN n,r,m";
+
+	}
+	cypher = cypher.replace('@id@', node_id);
+	expand(cypher, node_id);
+
+}
+
+function expand(cypher, node_id){
+	console.log("inside");
+	var current_node ;
+	for (var i =0; i< s.graph.nodes().length; i++){
+		if (Number(s.graph.nodes()[i].id) == Number(node_id)){
+			current_node = s.graph.nodes()[i];
+			break;
+		}
+	}
+	console.log(cypher);
+	sigma.neo4j.cypher(
+		{url: 'http://localhost:7474', user: 'neo4j', password: 'neo4j' },
+		cypher,
+		undefined,
+		mergeData(current_node));
+}
+
+function mergeData(currentNode) {
+	return function (result_graph) {
+		result_graph.nodes.forEach(function (node, index) {
+
+			if (_.findWhere(s.graph.nodes(), {id: node.id}) === undefined) {
+				node.x = currentNode.x + Math.cos(Math.PI * 2 * index / result_graph.nodes.length - Math.PI / 2);
+				node.y = currentNode.y + Math.sin(Math.PI * 2 * index / result_graph.nodes.length - Math.PI / 2);
+				s.graph.addNode(node);
+			}
+		});
+
+		result_graph.edges.forEach(function (edge) {
+			if (_.findWhere(s.graph.edges(), {id: edge.id}) === undefined) {
+				s.graph.addEdge(edge);
+			}
+		});
+		initData(s);
+		s.refresh();
+	};
+};
