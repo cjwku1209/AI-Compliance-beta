@@ -1,3 +1,4 @@
+var viz;
 function draw() {
 	var config = {
 		container_id: "black-body",
@@ -20,10 +21,15 @@ function draw() {
 		},
 		initial_cypher: "MATCH (a:Person {fullName: \"Anna Murdoch Mann\"}) MATCH (b:Person {fullName: \"Paul Cheesbrough\"}) MATCH p=ShortestPath((a)-[*..4]-(b)) RETURN p"
 	}
-	var viz = new NeoVis.default(config);
+	viz = new NeoVis.default(config);
 	viz.render();
 }
 
 $("#search").on('click', function () {
 	draw()
+
 });
+
+$("#stabilize").click(function() {
+	viz.stabilize();
+})
