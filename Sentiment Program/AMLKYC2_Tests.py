@@ -1,8 +1,16 @@
 import AMLKYC2_Sentiment_mod as s
 
-i = 1
+Test_News =open("short_reviews/Test.txt","r").read() 
 
-print(i, "  ", s.sentiment("This movie was awesome! The acting was great, plot was wonderful, and there were pythons...so yea!"))
+#Read testing articles from file.
+i = 1
+for p in Test_News.split('/////'):
+    print(i, "  ", s.sentiment(p))
+    i = i + 1
+
+#Read testing articles from quotes.
+i = 10
+print(i, "  ", s.sentiment("This movie was so great and awesome! The acting was great, plot was wonderful, and there were pythons...so yea!"))
 i = i + 1
 
 print(i, "  ",s.sentiment("This movie was utter junk. There were absolutely 0 pythons. I don't see what the point was at all. Horrible movie, 0/10"))
@@ -69,4 +77,14 @@ print(i, "  ",s.sentiment("it's nice to see piscopo again after all these years 
 i = i + 1
 
 print(i, "  ",s.sentiment("provides a porthole into that noble , trembling incoherence that defines us all . "))
+i = i + 1
+
+
+print(i, "  ",s.sentiment("The Shanghai factory is to produce up to 500,000 vehicles a year, a significant scale for an auto plant, and Musk's appearance was a win for China, now locked in a fierce trade war with the U.S., home of Tesla."))
+i = i + 1
+
+print(i, "  ",s.sentiment("The city of Shanghai is seen in a good light these days, having been at the forefront of China's policy of opening up to the outside world. But the commercial hub is now in the political spotlight for a separate reason."))
+i = i + 1
+
+print(i, "  ",s.sentiment("In the spring of 2023, China's No. 2, Premier Li Keqiang, 63, will most certainly step down. With President Xi Jinping and Vice President Wang Qishan now in office for indefinite terms, the fight to replace Li will be the most contested political battle for years to come."))
 
