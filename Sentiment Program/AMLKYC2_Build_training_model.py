@@ -32,8 +32,8 @@ class VoteClassifier(ClassifierI):
         choice_votes = votes.count(mode(votes))
         conf = choice_votes / len(votes)
         return conf
-    
-long_CompliaceNews =open("short_reviews/Compliance_News_List.txt","r").read() 
+
+long_CompliaceNews =open("short_reviews/Compliance_News_List.txt","r").read()
 short_ComplianceAML = open("short_reviews/Compliance_Negative_Word_List.txt","r").read()
 short_pos = open("short_reviews/positive.txt","r").read()
 short_neg = open("short_reviews/negative.txt","r").read()
@@ -80,7 +80,7 @@ for p in short_pos.split('\n'):
     #print("Documents:", documents[j][0])
     #print("Sentiment:", documents[j][1])
     #j=j+1
-    
+
     words = word_tokenize(p)
 
     #for w in words:
@@ -108,7 +108,7 @@ for p in documents:
     output.write(documents[j][1])
     output.write('\n')
     j=j+1
-    
+
 output.close()
 
 
@@ -125,7 +125,7 @@ j = 1
 output.write("Word distribution:")
 output.write('\n')
 
-for w in all_words: 
+for w in all_words:
     output.write(str(j))
     output.write(" ")
     output.write(w)                  #Show the contents of w.
@@ -158,7 +158,7 @@ save_word_features.close()
 
 #output = open("AMLKYC2_Doc/word_features_sentiment.txt","a")
 def find_features(document):
-    words = word_tokenize(document)    
+    words = word_tokenize(document)
     features = {}
     for w in word_features:
         features[w] = (w in words)
@@ -186,7 +186,7 @@ training_set = featuresets[:10000]
 #Naive Bayes Classifer
 classifier = nltk.NaiveBayesClassifier.train(training_set)
 print("Original Naive Bayes Algo accuracy percent:", (nltk.classify.accuracy(classifier, testing_set))*100)
-classifier.show_most_informative_features(15)
+#classifier.show_most_informative_features(15)
 
 save_classifier = open("pickled_algos/originalnaivebayes5k.pickle","wb")
 pickle.dump(classifier, save_classifier)
@@ -227,11 +227,6 @@ print("LinearSVC_classifier accuracy percent:", (nltk.classify.accuracy(LinearSV
 save_classifier = open("pickled_algos/LinearSVC_classifier5k.pickle","wb")
 pickle.dump(LinearSVC_classifier, save_classifier)
 save_classifier.close()
-
-#Nu SVC classifier
-##NuSVC_classifier = SklearnClassifier(NuSVC())
-##NuSVC_classifier.train(training_set)
-##print("NuSVC_classifier accuracy percent:", (nltk.classify.accuracy(NuSVC_classifier, testing_set))*100)
 
 #SGDC classifier
 SGDC_classifier = SklearnClassifier(SGDClassifier())
